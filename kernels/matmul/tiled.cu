@@ -2,8 +2,8 @@
 
 #include <cuda_runtime.h>
 
-// One thread computes one output element: C[row, col].
-__global__ void matmul_naive(const float *A, const float *B, float *C, int M,
+// TODO: implement a tiled matmul kernel using __shared__ memory.
+__global__ void matmul_tiled(const float *A, const float *B, float *C, int M,
                              int K, int N) {
     const int row = blockIdx.y * blockDim.y + threadIdx.y;
     const int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -19,12 +19,12 @@ __global__ void matmul_naive(const float *A, const float *B, float *C, int M,
     C[row * N + col] = sum;
 }
 
-void launch_naive(const float *A, const float *B, float *C, int M, int K, int N) {
+void launch_tiled(const float *A, const float *B, float *C, int M, int K, int N) {
     dim3 block(16, 16);
     dim3 grid((N + block.x - 1) / block.x, (M + block.y - 1) / block.y);
-    matmul_naive<<<grid, block>>>(A, B, C, M, K, N);
+    matmul_tiled<<<grid, block>>>(A, B, C, M, K, N);
 }
 
 int main(int argc, char **argv) {
-    return run_matmul_cli(argc, argv, launch_naive);
+    return run_matmul_cli(argc, argv, launch_tiled);
 }

@@ -1,0 +1,17 @@
+CompileFlags:
+  Add:
+    - -I/usr/local/cuda/include
+    - -I/usr/local/cuda/targets/x86_64-linux/include
+    - -I/usr/local/cuda/targets/x86_64-linux/include/cccl
+
+---
+If:
+  PathMatch: .*\.cu$
+CompileFlags:
+  CompilationDatabase: None
+  Add:
+    - -xcuda
+    - --cuda-path=/usr/local/cuda
+    - --cuda-gpu-arch=sm_86
+    - -std=c++17
+    - -Ikernels/matmul
